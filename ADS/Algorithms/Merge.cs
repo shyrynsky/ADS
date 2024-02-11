@@ -2,7 +2,7 @@ namespace ADS;
 
 public static partial class Algorithms
 {
-    public static void Merge(List<int> arr, int l, int m, int r)
+    public static void BasicMerge(List<int> arr, int l, int m, int r)
     {
         var lIndex = l;
         var rIndex = m;
@@ -24,9 +24,27 @@ public static partial class Algorithms
             arr[l++] = tempArr[i];
     }
 
-    public static void MergeLessMem()
+    public static void MergeLessMem(List<int> arr, int l, int m, int r)
     {
-        throw new NotImplementedException();
+        var lIndex = 0;
+        var finIndex = l;
+        var rIndex = m;
+        var length = m - l;
+        var tempArr = length < 1024 ? stackalloc int[length] : new int[length];
+        for (var i = 0; i < length; i++)
+            tempArr[i] = arr[l + i];
+        while (lIndex < length && rIndex < r)
+        {
+            if (tempArr[lIndex] <= arr[rIndex])
+                arr[finIndex++] = tempArr[lIndex++];
+            else
+                arr[finIndex++] = arr[rIndex++];
+        }
+
+        while (lIndex < length)
+            arr[finIndex++] = tempArr[lIndex++];
+        while (rIndex < r)
+            arr[finIndex++] = arr[rIndex++];
     }
 
     public static void InPlaceMerge()
@@ -42,7 +60,7 @@ public static partial class Algorithms
         var m = (lBoard + rBoard) / 2;
         _mergeSort(lBoard, m);
         _mergeSort(m, rBoard);
-        Merge(_mergeSortArr, lBoard, m, rBoard);
+        MergeLessMem(_mergeSortArr, lBoard, m, rBoard);
     }
     
     public static void MergeSort(List<int> arr)
